@@ -29,7 +29,7 @@ jobs:
         uses: Azure/Synapse-workspace-deployment@V1.3.0
         with:
             # Provide the Synapse workspace name where you want to deploy the artifacts.
-            TargetWorkspaceName: 'targetworkspace'
+            TargetWorkspaceName: 'synapse-cicd-target'
             # Specify the path to the workspace artifacts template.
             TemplateFile: './TemplateForWorkspace.json'
             # Specify the path to the template parameter file.
