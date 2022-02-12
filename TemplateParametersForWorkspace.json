@@ -38,7 +38,7 @@
 			}
 		},
 		"Notebook 1_properties_bigDataPool_referenceName": {
-			"value": "mysparkpool"
+			"value": "syncicdparkpool"
 		}
 	}
 }
