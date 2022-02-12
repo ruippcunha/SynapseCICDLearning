@@ -31,9 +31,9 @@ jobs:
             # Provide the Synapse workspace name where you want to deploy the artifacts.
             TargetWorkspaceName: 'targetworkspace'
             # Specify the path to the workspace artifacts template.
-            TemplateFile: './TemplateForWorkspace.json'
+            TemplateFile: '/workspace_publish/TemplateForWorkspace.json'
             # Specify the path to the template parameter file.
-            ParametersFile: './TemplateParametersForWorkspace.json'                       
+            ParametersFile: '/workspace_publish/TemplateParametersForWorkspace.json'                       
             # Provide the type of cloud environment. Valid values are: Azure Public, Azure China, Azure US Government, Azure Germany
             Environment: 'Azure Public'
             # Provide the resource group of the target Synapse workspace.
