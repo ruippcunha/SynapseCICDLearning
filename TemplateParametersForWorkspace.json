@@ -1,0 +1,44 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "synapsecicd-learning"
+		},
+		"synapsecicd-learning-WorkspaceDefaultSqlServer_connectionString": {
+			"value": ""
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://kv-cicddemo-dev.vault.azure.net/"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_connectionString": {
+			"value": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVault1",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "db-connstring"
+			}
+		},
+		"synapsecicd-learning-WorkspaceDefaultSqlServer_properties_typeProperties_connectionString": {
+			"value": ""
+		},
+		"synapsecicd-learning-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://stgsyn2022repro.dfs.core.windows.net"
+		},
+		"AutoResolveIntegrationRuntime_properties_typeProperties_computeProperties": {
+			"value": {
+				"location": "AutoResolve",
+				"dataFlowProperties": {
+					"computeType": "General",
+					"coreCount": 8,
+					"timeToLive": 0
+				}
+			}
+		},
+		"Notebook 1_properties_bigDataPool_referenceName": {
+			"value": "mysparkpool"
+		}
+	}
+}
