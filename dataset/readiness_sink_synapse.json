@@ -1,0 +1,17 @@
+{
+	"name": "readiness_sink_synapse",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_NYTAXI_POOL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "readiness_copy_demo"
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

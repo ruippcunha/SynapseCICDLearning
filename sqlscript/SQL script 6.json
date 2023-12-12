@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 6",
+	"properties": {
+		"content": {
+			"query": "SELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://storagewspcunha.dfs.core.windows.net/filesyswspcunha/mnt/silver-data-zone/DELTA/spire_portfolios/xrc1p_reporting_line_item_drilldown/ptf_proc_link_id=1/part-00000-847b314c-a23c-45e3-ac54-f43699e0c4e5.c000.snappy.parquet',\n        FORMAT='DELTA'\n    ) AS [result]\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

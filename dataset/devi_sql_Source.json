@@ -1,0 +1,13 @@
+{
+	"name": "devi_sql_Source",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_poolwspcunha",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": []
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

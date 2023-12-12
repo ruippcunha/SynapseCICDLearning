@@ -1,0 +1,16 @@
+{
+	"name": "IR-CUNHA-NO-TTL",
+	"properties": {
+		"type": "Managed",
+		"typeProperties": {
+			"computeProperties": {
+				"location": "North Europe",
+				"dataFlowProperties": {
+					"computeType": "General",
+					"coreCount": 16,
+					"timeToLive": 0
+				}
+			}
+		}
+	}
+}

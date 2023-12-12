@@ -1,0 +1,21 @@
+{
+	"name": "ls_dynamics365",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "Dynamics",
+		"typeProperties": {
+			"deploymentType": "Online",
+			"serviceUri": "https://myorg.crm.dynamics.com",
+			"authenticationType": "ManagedIdentity",
+			"credential": {
+				"referenceName": "cred_User_MI",
+				"type": "CredentialReference"
+			}
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

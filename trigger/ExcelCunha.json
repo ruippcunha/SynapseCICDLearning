@@ -1,0 +1,28 @@
+{
+	"name": "ExcelCunha",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Pipeline 2",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"tablename": "test"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/meucontainer/blobs/folder1",
+			"blobPathEndsWith": ".xlsx",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/7b1f20ef-1976-4cda-8578-8ed55045bd7a/resourceGroups/rg-cunha/providers/Microsoft.Storage/storageAccounts/storagewspcunha",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

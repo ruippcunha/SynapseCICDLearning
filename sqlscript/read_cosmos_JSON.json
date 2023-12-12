@@ -1,0 +1,17 @@
+{
+	"name": "read_cosmos_JSON",
+	"properties": {
+		"content": {
+			"query": "SELECT TOP 10 *\nFROM OPENROWSET( \n       'CosmosDB',\n       'Account=cosmoscunha;Database=SampleDB;Key=3hr8kSEYmrelGKRrogUG4fDrXN353QA74eKoUHpfvTbkKecLGQNJuQrMl326fdiKeZfwrEWkH2KgBR4nbT7GeA==',\n       myanalytical) as documents2",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "CunhaODPool",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

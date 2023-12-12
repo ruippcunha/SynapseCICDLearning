@@ -1,0 +1,16 @@
+{
+	"name": "ScriptCunha",
+	"properties": {
+		"content": {
+			"query": "select top(1000) *\nfrom dbo.recursive\n\ndrop table [yellow_tripdata_2020-01.csv];\ndrop table [fhv_tripdata_2020-01.csv];\ndrop table [green_tripdata_2020-01.csv];\ndrop table [Azure Data Lake Storage Gen2 file];\ndrop table dbo.recursive\ndrop table dbo.SalesData",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "poolwspcunha",
+				"poolName": "poolwspcunha"
+			}
+		},
+		"type": "SqlQuery"
+	}
+}

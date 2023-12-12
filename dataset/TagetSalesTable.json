@@ -1,0 +1,20 @@
+{
+	"name": "TagetSalesTable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "wspcunha-WorkspaceDefaultSqlServer",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"DBName": "poolwspcunha"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "SalesData"
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

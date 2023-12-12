@@ -1,0 +1,112 @@
+{
+	"name": "run_sql_from_files_3",
+	"properties": {
+		"activities": [
+			{
+				"name": "get_sql_statement",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"wildcardFileName": {
+								"value": "@pipeline().parameters.devi_file",
+								"type": "Expression"
+							},
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "devi_sql",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "sql_statement",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "get_sql_statement",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "sql_statement",
+					"value": {
+						"value": "@activity('get_sql_statement').output.firstRow.Prop_0",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Execute StoredProcedure",
+				"type": "SqlPoolStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "sql_statement",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"sqlPool": {
+					"referenceName": "poolwspcunha",
+					"type": "SqlPoolReference"
+				},
+				"typeProperties": {
+					"storedProcedureName": {
+						"value": "@variables('sql_statement')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"devi_file": {
+				"type": "string",
+				"defaultValue": "devi_sql3.sql"
+			}
+		},
+		"variables": {
+			"sql_statement": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Repro"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-03-07T15:21:16Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

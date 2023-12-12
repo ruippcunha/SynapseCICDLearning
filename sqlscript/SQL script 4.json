@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 4",
+	"properties": {
+		"content": {
+			"query": " SELECT\n      count(*)\n    FROM\n        OPENROWSET(\n            BULK 'https://storagewspcunha.dfs.core.windows.net/mnt/02-silver-data-zone/DELTA/spire_portfolios/xrc2p_reporting_line_item_drilldown',\n            FORMAT='DELTA'\n        ) AS [result];",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "default",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

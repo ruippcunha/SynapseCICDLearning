@@ -1,0 +1,17 @@
+{
+	"name": "CosmosDbMongoPBITest",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "CosmosDbMongoDbApi",
+		"typeProperties": {
+			"connectionString": "mongodb://cunha-cosmos-mongodb:@cunha-cosmos-mongodb.documents.azure.com:10255/?ssl=true;replicaSet=globaldb",
+			"database": "pbitestdb",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIldTUENVTkhBX2U0MDMxZDdkLTM1ZDUtNGQxNi1hOWE5LTI1YzZmMjUwODY3ZSINCn0="
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

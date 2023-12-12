@@ -1,0 +1,37 @@
+{
+	"name": "P_121012025001234",
+	"properties": {
+		"activities": [
+			{
+				"name": "DF_121012025001234",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_121012025001234",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 16,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "Repro"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-02-17T22:18:33Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

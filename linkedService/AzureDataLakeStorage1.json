@@ -1,0 +1,22 @@
+{
+	"name": "AzureDataLakeStorage1",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"description": "teste",
+		"parameters": {
+			"stgname": {
+				"type": "string",
+				"defaultValue": "https://stgadlsgen2ext.dfs.core.windows.net"
+			}
+		},
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "@{linkedService().stgname}"
+		},
+		"connectVia": {
+			"referenceName": "IR-CUNHA-4CORES",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

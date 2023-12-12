@@ -1,0 +1,16 @@
+{
+	"name": "LS_master_SQL_OD",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDW",
+		"typeProperties": {
+			"connectionString": "integrated security=False;encrypt=True;connection timeout=30;data source=wspcunha-ondemand.sql.azuresynapse.net;initial catalog=master;user id=sqladmin",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIlNZTkFQU0VAQ0NBNTM3QkYtMTNERi00Nzg3LUJGRjEtRjY1NUQzMjg0RkQ1Xzc2ZDY4NDJhLTY5ZjMtNDNlYy05OTgxLWU5NjU1YzdmM2Q1YiINCn0="
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

@@ -1,0 +1,25 @@
+{
+	"name": "SQLPool_Dflow",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_NYTAXI_POOL",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"tablename": {
+				"type": "string",
+				"defaultValue": "'teste'"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [],
+		"typeProperties": {
+			"table": {
+				"value": "@dataset().tablename",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

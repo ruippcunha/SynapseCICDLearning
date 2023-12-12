@@ -1,0 +1,16 @@
+{
+	"name": "AzureDataExplorer1",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureDataExplorer",
+		"typeProperties": {
+			"endpoint": "https://cunhakustocluster.northeurope.kusto.windows.net",
+			"database": "kustodbcunha"
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

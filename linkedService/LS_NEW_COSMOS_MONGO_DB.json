@@ -1,0 +1,18 @@
+{
+	"name": "LS_NEW_COSMOS_MONGO_DB",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "CosmosDbMongoDbApi",
+		"typeProperties": {
+			"connectionString": "mongodb://new-cosmos-mongo-db:@new-cosmos-mongo-db.mongo.cosmos.azure.com:10255/?appname=@new-cosmos-mongo-db@;tls=true;replicaSet=globaldb;maxIdleTime=2m;retryWrites=false",
+			"database": "cosmos_synapse",
+			"isServerVersionAbove32": true,
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIlNZTkFQU0VAQ0NBNTM3QkYtMTNERi00Nzg3LUJGRjEtRjY1NUQzMjg0RkQ1XzBiYWJiZTUxLWQ5MmEtNGM4Yi04OWI0LTY4ZjAxODk0OTUxZSINCn0="
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
