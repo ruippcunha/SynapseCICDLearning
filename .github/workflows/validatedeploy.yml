@@ -32,7 +32,7 @@ jobs:
         run: node -v
       
       - name: Synapse workspace deployment
-        uses: Azure/Synapse-workspace-deployment@V1.9.0
+        uses: Azure/Synapse-workspace-deployment@V1.8.0
         with:
             # Provide the Synapse workspace name where you want to deploy the artifacts.
             TargetWorkspaceName: 'syn-caserepro-dev'
@@ -48,5 +48,5 @@ jobs:
             subscriptionId: ${{ secrets.SUBSCRIPTIONID }}
             # Provide tenant id.
             tenantId: ${{ secrets.TENANTID }}
-            operation: 'ValidateDeploy'
+            operation: validateDeploy
            
