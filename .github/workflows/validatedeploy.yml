@@ -48,5 +48,5 @@ jobs:
             subscriptionId: ${{ secrets.SUBSCRIPTIONID }}
             # Provide tenant id.
             tenantId: ${{ secrets.TENANTID }}
-            operation: validateDeploy
+            operation: validate
            
