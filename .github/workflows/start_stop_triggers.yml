@@ -80,10 +80,11 @@ jobs:
                           try {
                               if ($name -like "newtrigger*" -and $SynapseWorkspaceName -like "swift-demo") {
                                 Start-AzSynapseTrigger -WorkspaceName $SynapseWorkspaceName -Name $name -PassThru
+                                echo "Trigger $name started"
                               }
                           } 
                           catch { 
-                            echo "Trigger $name started"
+                            echo "Trigger $name"
                           }
                     }
           
