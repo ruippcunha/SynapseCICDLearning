@@ -31,10 +31,10 @@ jobs:
           # Specify the Az PowerShell script here.
           inlineScript: | 
           
-                  $clientId = ${{SECRETS.CLIENTID}}
-                  $tenantId = ${{SECRETS.TENANTID}}
-                  $clientSecret = ${{SECRETS.CLIENTSECRET}}
-                  $subscriptionId = ${{SECRETS.SUBSCRIPTIONID}}
+                  $clientId = "${{SECRETS.CLIENTID}}"
+                  $tenantId = "${{SECRETS.TENANTID}}"
+                  $clientSecret = "${{SECRETS.CLIENTSECRET}}"
+                  $subscriptionId = "${{SECRETS.SUBSCRIPTIONID}}"
             
                   $securePassword = ConvertTo-SecureString $clientSecret -AsPlainText -Force
                   $psCredential = New-Object System.Management.Automation.PSCredential ($clientId, $securePassword)
