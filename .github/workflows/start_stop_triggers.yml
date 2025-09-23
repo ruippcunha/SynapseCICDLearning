@@ -30,7 +30,8 @@ jobs:
         with:
           # Specify the Az PowerShell script here.
           inlineScript: | 
-                    $triggerlist= Get-AzSynapseTrigger -WorkspaceName "swift-demo" | select Name
+                   Select-AzSubscription -SubscriptionId "0c6ee07f-0d38-4a6b-b8f8-93814aae9823"
+                   $triggerlist= Get-AzSynapseTrigger -WorkspaceName "swift-demo" | select Name
                     # Loop through each trigger and start it
                     foreach ($trigger in $triggerlist ) {
                         $name = $trigger.Name 
