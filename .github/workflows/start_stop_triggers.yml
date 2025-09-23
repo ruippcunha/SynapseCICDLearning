@@ -76,7 +76,7 @@ jobs:
                     # Loop through each trigger and start it
                     foreach ($trigger in $triggerlist ) {
                         $name = $trigger.Name 
-                        echo "Start trigger $name"
+                        
                           try {
                               if ($name -like "newtrigger*" -and $SynapseWorkspaceName -like "swift-demo") {
                                 Start-AzSynapseTrigger -WorkspaceName $SynapseWorkspaceName -Name $name -PassThru
