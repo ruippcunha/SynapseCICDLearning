@@ -34,18 +34,19 @@ jobs:
                   $tenantId = "${{SECRETS.TENANTID}}"
                   $clientSecret = "${{SECRETS.CLIENTSECRET}}"
                   $subscriptionId = "${{SECRETS.SUBSCRIPTIONID}}"
+                  $SynapseWorkspaceName = "${{secrets.TargetWorkspaceName}}"
             
                   $securePassword = ConvertTo-SecureString $clientSecret -AsPlainText -Force
                   $psCredential = New-Object System.Management.Automation.PSCredential ($clientId, $securePassword)
                   Connect-AzAccount -ServicePrincipal -Credential $psCredential -Tenant $tenantId -SubscriptionId $subscriptionId
                    
-                   $triggerlist= Get-AzSynapseTrigger -WorkspaceName "swift-demo" | select Name
+                   $triggerlist= Get-AzSynapseTrigger -WorkspaceName $SynapseWorkspaceName | select Name
                     # Loop through each trigger and start it
                     foreach ($trigger in $triggerlist ) {
                         $name = $trigger.Name 
                         echo "Stopping trigger $name"
                           try {
-                            Stop-AzSynapseTrigger -WorkspaceName "swift-demo" -Name $name -PassThru
+                            Stop-AzSynapseTrigger -WorkspaceName $SynapseWorkspaceName -Name $name -PassThru
                           } 
                           catch { 
                             echo "Trigger $name stopped"
@@ -65,19 +66,20 @@ jobs:
                   $tenantId = "${{SECRETS.TENANTID}}"
                   $clientSecret = "${{SECRETS.CLIENTSECRET}}"
                   $subscriptionId = "${{SECRETS.SUBSCRIPTIONID}}"
+                  $SynapseWorkspaceName = "${{secrets.TargetWorkspaceName}}"
             
                   $securePassword = ConvertTo-SecureString $clientSecret -AsPlainText -Force
                   $psCredential = New-Object System.Management.Automation.PSCredential ($clientId, $securePassword)
                   Connect-AzAccount -ServicePrincipal -Credential $psCredential -Tenant $tenantId -SubscriptionId $subscriptionId
                    
-                   $triggerlist= Get-AzSynapseTrigger -WorkspaceName "swift-demo" | select Name
+                   $triggerlist= Get-AzSynapseTrigger -WorkspaceName $SynapseWorkspaceName | select Name
                     # Loop through each trigger and start it
                     foreach ($trigger in $triggerlist ) {
                         $name = $trigger.Name 
                         echo "Start trigger $name"
                           try {
                               if ($name -like "newtrigger*" -and $SynapseWorkspaceName -like "swift-demo") {
-                                Start-AzSynapseTrigger -WorkspaceName "swift-demo" -Name $name -PassThru
+                                Start-AzSynapseTrigger -WorkspaceName $SynapseWorkspaceName -Name $name -PassThru
                               }
                           } 
                           catch { 
