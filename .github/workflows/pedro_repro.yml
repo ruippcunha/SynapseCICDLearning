@@ -37,9 +37,13 @@ jobs:
                   $SynapseWorkspaceName = "${{secrets.TargetWorkspaceName}}"
             
                   # Make PSGallery trusted to avoid prompts during Install/Update
-                   if ((Get-PSRepository -Name 'PSGallery' -ErrorAction SilentlyContinue).InstallationPolicy -ne 'Trusted') {
-                          Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
-                  }
+
+                   Make PSGallery trusted to avoid prompts
+                   $repo = Get-PSRepository -Name 'PSGallery' -ErrorAction SilentlyContinue
+                   if (-not $repo -or $repo.InstallationPolicy -ne 'Trusted') {
+                      Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
+                   }
+
           
                   # Ensure PowerShellGet cmdlets exist (should be present on GitHub runners)
                   Import-Module PowerShellGet -ErrorAction Stop
@@ -47,7 +51,7 @@ jobs:
                   # Update or install the Az rollup module (brings in all Az.*)
                   if (Get-Module -ListAvailable -Name Az) {
                     Write-Host "Updating Az to latest..."
-                    Update-Module -Name Az -Force -AllowClobber
+                    Update-Module -Name Az -Force
                   } else {
                     Write-Host "Installing Az..."
                     Install-Module -Name Az -Scope CurrentUser -Force -AllowClobber
@@ -56,7 +60,7 @@ jobs:
                   # Update or install Az.Synapse explicitly (to make sure Synapse cmdlets are available)
                   if (Get-Module -ListAvailable -Name Az.Synapse) {
                     Write-Host "Updating Az.Synapse to latest..."
-                    Update-Module -Name Az.Synapse -Force -AllowClobber
+                    Update-Module -Name Az.Synapse -Force
                   } else {
                     Write-Host "Installing Az.Synapse..."
                     Install-Module -Name Az.Synapse -Scope CurrentUser -Force -AllowClobber
