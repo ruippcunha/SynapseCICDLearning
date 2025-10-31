@@ -49,21 +49,23 @@ jobs:
                   Import-Module PowerShellGet -ErrorAction Stop
             
 
-                    Write-Host "Installing Az..."
-                    Install-Module -Name Az -Force -AllowClobber
-                    Write-Host "Installing Az.Synapse..."
-                    Install-Module -Name Az.Synapse -Force -AllowClobber
+                  Write-Host "Installing Az..."
+                  Install-Module -Name Az -Force -AllowClobber
+                  Write-Host "Installing Az.Synapse..."
+                  Install-Module -Name Az.Synapse -Force -AllowClobber
             
             
-                  # Import the modules we need for this job
-                  Import-Module Az.Accounts -ErrorAction Stop
-                  Import-Module Az.Synapse  -ErrorAction Stop
-            
-                  # Show effective versions for troubleshooting
-                  Get-Module Az,Az.Accounts,Az.Synapse -ListAvailable |
-                    Sort-Object Name, Version |
-                    Select-Object Name, Version |
-                    Format-Table -AutoSize
+
+                  $latestAz = (Get-Module -ListAvailable Az | Sort-Object Version -Descending | Select-Object -First 1).Path
+                  $latestSynapse = (Get-Module -ListAvailable Az.Synapse | Sort-Object Version -Descending | Select-Object -First 1).Path
+
+                  Write-Host "Az version being used"
+                  echo $latestAz
+                  Write-Host "Az.Synapse version being used"
+                  echo $latestSynapse
+                  
+                  Import-Module $latestAz -Force
+                  Import-Module $latestSynapse -Force
 
                   Write-Host "Authenticating...."
                   $securePassword = ConvertTo-SecureString $clientSecret -AsPlainText -Force
