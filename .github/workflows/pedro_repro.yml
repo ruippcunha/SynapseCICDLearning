@@ -48,23 +48,12 @@ jobs:
                   # Ensure PowerShellGet cmdlets exist (should be present on GitHub runners)
                   Import-Module PowerShellGet -ErrorAction Stop
             
-                  # Update or install the Az rollup module (brings in all Az.*)
-                  if (Get-Module -ListAvailable -Name Az) {
-                    Write-Host "Updating Az to latest..."
-                    Update-Module -Name Az -Force
-                  } else {
+
                     Write-Host "Installing Az..."
-                    Install-Module -Name Az -Scope CurrentUser -Force -AllowClobber
-                  }
-            
-                  # Update or install Az.Synapse explicitly (to make sure Synapse cmdlets are available)
-                  if (Get-Module -ListAvailable -Name Az.Synapse) {
-                    Write-Host "Updating Az.Synapse to latest..."
-                    Update-Module -Name Az.Synapse -Force
-                  } else {
+                    Install-Module -Name Az -Force -AllowClobber
                     Write-Host "Installing Az.Synapse..."
-                    Install-Module -Name Az.Synapse -Scope CurrentUser -Force -AllowClobber
-                  }
+                    Install-Module -Name Az.Synapse -Force -AllowClobber
+            
             
                   # Import the modules we need for this job
                   Import-Module Az.Accounts -ErrorAction Stop
