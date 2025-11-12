@@ -1,0 +1,10 @@
+{
+	"name": "synapse-ws-custstgacct--swift-demo-stgsynapseruicunha",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/0c6ee07f-0d38-4a6b-b8f8-93814aae9823/resourceGroups/rg-synapse/providers/Microsoft.Storage/storageAccounts/stgsynapseruicunha",
+		"groupId": "dfs",
+		"fqdns": [
+			"stgsynapseruicunha.dfs.core.windows.net"
+		]
+	}
+}

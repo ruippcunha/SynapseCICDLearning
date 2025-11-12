@@ -1,0 +1,66 @@
+{
+	"name": "mydeltatable",
+	"properties": {
+		"Name": "mydeltatable",
+		"EntityType": "TABLE",
+		"TableType": "EXTERNAL",
+		"Namespace": {
+			"SchemaName": null,
+			"DatabaseName": "mylakedb_UI",
+			"DatabaseId": null
+		},
+		"StorageDescriptor": {
+			"Distribution": null,
+			"Columns": [],
+			"ColumnSetEntityName": "1ebb7ad6-25f5-4e79-b0a5-12357a86f562",
+			"Format": {
+				"InputFormat": "org.apache.hadoop.mapred.SequenceFileInputFormat",
+				"OutputFormat": "org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat",
+				"FormatType": "delta",
+				"SerializeLib": "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe",
+				"Properties": {
+					"path": "abfss://swiftdemo@stgsynapseruicunha.dfs.core.windows.net/mylakedb_UI/mydeltatable",
+					"serialization.format": "1"
+				}
+			},
+			"Source": {
+				"Location": "abfss://swiftdemo@stgsynapseruicunha.dfs.core.windows.net/mylakedb_UI/mydeltatable",
+				"Properties": {
+					"LocationSetToDatabaseDefault": false
+				}
+			},
+			"Properties": {
+				"compression": "{\"type\":\"None\",\"level\":\"optimal\"}",
+				"derivedModelAttributeInfo": "{\"attributeReferences\":{}}"
+			},
+			"Compressed": false,
+			"SerDeInfo": null,
+			"IsStoredAsSubdirectories": false
+		},
+		"Owner": "trusted-service-user",
+		"CreateTime": 1752531445,
+		"LastAccessTime": 0,
+		"Retention": 0,
+		"Temporary": false,
+		"IsRewriteEnabled": false,
+		"ViewOriginalText": null,
+		"ViewExpandedText": null,
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"OriginObjectId": null,
+		"IsSharedEntity": false,
+		"PublishStatus": "PUBLISHED",
+		"Properties": {
+			"Transient_lastDdlTime": "1752531445",
+			"PrimaryKeys": "",
+			"spark.sql.sources.schema": "{\"type\":\"struct\",\"fields\":[]}",
+			"spark.sql.partitionProvider": "catalog",
+			"spark.sql.sources.provider": "delta",
+			"spark.sql.create.version": "3.4.3.5.3.20250511.1"
+		},
+		"ObjectVersion": 2,
+		"ObjectId": "0809abae-7801-4eb1-b4e1-6e9ad45552ee"
+	},
+	"type": "TABLE"
+}

@@ -1,0 +1,17 @@
+{
+	"name": "LS_sqldb_sqlauth_v1",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "integrated security=False;encrypt=True;connection timeout=30;data source=cunhacontososqlserver.database.windows.net;initial catalog=mysqldb;user id=sqladmin",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIlNZTkFQU0VAMTBFOTNDMEEtREQ0OC00MDE1LUI4RDYtM0YyMDIzRDkzRTY5XzE3YTljNDQ3LWE0ZTQtNDRkMC1hZDhjLTE2ZGI1MWQ1ODA1YiINCn0="
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		},
+		"description": "test"
+	}
+}

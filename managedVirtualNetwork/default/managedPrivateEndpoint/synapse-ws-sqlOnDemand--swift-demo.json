@@ -1,0 +1,10 @@
+{
+	"name": "synapse-ws-sqlOnDemand--swift-demo",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/0c6ee07f-0d38-4a6b-b8f8-93814aae9823/resourceGroups/rg-synapse/providers/Microsoft.Synapse/workspaces/swift-demo",
+		"groupId": "sqlOnDemand",
+		"fqdns": [
+			"swift-demo-ondemand.f33390fb-5ccc-427d-a1b0-67bd8f9c86a1.sql.azuresynapse.net"
+		]
+	}
+}

@@ -1,0 +1,25 @@
+{
+	"name": "mylakedb_UI",
+	"properties": {
+		"Name": "mylakedb_UI",
+		"EntityType": "DATABASE",
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"Properties": {
+			"IsSyMSCDMDatabase": true
+		},
+		"Source": {
+			"Provider": "ADLS",
+			"Location": "abfss://swiftdemo@stgsynapseruicunha.dfs.core.windows.net/mylakedb_UI",
+			"Properties": {
+				"FormatType": "parquet",
+				"LinkedServiceName": "swift-demo-WorkspaceDefaultStorage"
+			}
+		},
+		"PublishStatus": "PUBLISHED",
+		"ObjectVersion": 2,
+		"ObjectId": "b99b719f-7e96-4602-9cf0-2969dcfb8f5c"
+	},
+	"type": "DATABASE"
+}

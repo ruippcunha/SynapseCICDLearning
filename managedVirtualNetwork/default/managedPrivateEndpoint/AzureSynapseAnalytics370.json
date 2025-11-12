@@ -1,0 +1,10 @@
+{
+	"name": "AzureSynapseAnalytics370",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/0c6ee07f-0d38-4a6b-b8f8-93814aae9823/resourceGroups/rg-synapse-US/providers/Microsoft.Synapse/workspaces/cunhaflavor2wus",
+		"groupId": "sql",
+		"fqdns": [
+			"cunhaflavor2wus.sql.azuresynapse.net"
+		]
+	}
+}
