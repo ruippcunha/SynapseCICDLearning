@@ -1,0 +1,16 @@
+{
+	"name": "mysparkconfig",
+	"properties": {
+		"configs": {
+			"spark.acls.enable": "true",
+			"spark.authenticate": "true"
+		},
+		"created": "2025-05-14T21:15:59.209Z",
+		"createdBy": "admin@MngEnvMCAP544797.onmicrosoft.com",
+		"annotations": [],
+		"configMergeRule": {
+			"artifact.currentOperation.spark.acls.enable": "replace",
+			"artifact.currentOperation.spark.authenticate": "replace"
+		}
+	}
+}

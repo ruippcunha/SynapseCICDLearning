@@ -1,0 +1,17 @@
+{
+	"name": "Triggerx",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/dacpaclogs/blobs/",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/0c6ee07f-0d38-4a6b-b8f8-93814aae9823/resourceGroups/rg-synapse/providers/Microsoft.Storage/storageAccounts/anotherstorageforsynapse",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

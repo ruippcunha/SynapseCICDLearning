@@ -1,0 +1,277 @@
+{
+	"name": "PL_SFDC_KNOWLEDGE_KAV_INCR_0002",
+	"properties": {
+		"description": "This pipeline ingests data from SFDC API to Landing of ADLS.",
+		"activities": [
+			{
+				"name": "CPY SFDC API ADLS",
+				"description": "This activity copies INCR load table data from SFDC API to ADLS Landing zone in the provided Target path.",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "HIMAWARI_CLNT_ID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "2.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "@{pipeline().parameters.FILE_NM}"
+					},
+					{
+						"name": "Destination",
+						"value": "landing/@{concat('13636_JPN_KORE_AI/',pipeline().parameters.FILE_NM,'/Knowledge__kav_TMP/')}/@{concat(pipeline().parameters.FILE_NM,'.json')}"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "SalesforceV2Source",
+						"query": {
+							"value": "SELECT ArticleNumber,VersionNumber,UrlName,Title,Summary,ArticleType_Summary_Answer__c,KnowledgeArticleId FROM @{pipeline().parameters.FILE_NM}",
+							"type": "Expression"
+						},
+						"includeDeletedObjects": false
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings",
+							"filePattern": "setOfObjects"
+						}
+					},
+					"enableStaging": false,
+					"logSettings": {
+						"enableCopyActivityLog": true,
+						"copyActivityLogSettings": {
+							"logLevel": "Info",
+							"enableReliableLogging": false
+						},
+						"logLocationSettings": {
+							"linkedServiceName": {
+								"referenceName": "LS_AZ_ADLS_LOG",
+								"type": "LinkedServiceReference"
+							},
+							"path": {
+								"value": "@concat('log','/',addHours(utcNow(),9,'yyyy/MM/dd'),'/',pipeline().Pipeline)",
+								"type": "Expression"
+							}
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_SFDC_HIMAWARI",
+						"type": "DatasetReference",
+						"parameters": {
+							"Object": {
+								"value": "@pipeline().parameters.FILE_NM",
+								"type": "Expression"
+							},
+							"Client_ID": {
+								"value": "@activity('HIMAWARI_CLNT_ID').output.value",
+								"type": "Expression"
+							},
+							"SFDC_Version": {
+								"value": "@variables('SFDC_Version')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_KORE_ADLS",
+						"type": "DatasetReference",
+						"parameters": {
+							"Path": {
+								"value": "@concat('13636_JPN_KORE_AI/',pipeline().parameters.FILE_NM,'/Knowledge__kav_TMP/')",
+								"type": "Expression"
+							},
+							"File_Name": {
+								"value": "@concat(pipeline().parameters.FILE_NM,'.json')",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "HIMAWARI_CLNT_ID",
+				"description": "This activity fetches client ID details from AKV.",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@concat(pipeline().parameters.Resource,'/secrets/client-key-sfdc-himawari?api-version=',pipeline().parameters.Api_Version)",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": {
+							"value": "@pipeline().parameters.Resource",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "CPY SFDC API ADLS_copy1",
+				"description": "This activity copies INCR load table data from SFDC API to ADLS Landing zone in the provided Target path.",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "2.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "@{pipeline().parameters.FILE_NM}"
+					},
+					{
+						"name": "Destination",
+						"value": "landing/@{concat('13636_JPN_KORE_AI/',pipeline().parameters.FILE_NM,'/Knowledge__kav_TMP/')}/@{concat(pipeline().parameters.FILE_NM,'.json')}"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "SalesforceV2Source",
+						"query": {
+							"value": "SELECT ArticleNumber,VersionNumber,UrlName,Title,Summary,ArticleType_Summary_Answer__c,KnowledgeArticleId FROM @{pipeline().parameters.FILE_NM}",
+							"type": "Expression"
+						},
+						"includeDeletedObjects": false
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings",
+							"filePattern": "setOfObjects"
+						}
+					},
+					"enableStaging": false,
+					"logSettings": {
+						"enableCopyActivityLog": true,
+						"copyActivityLogSettings": {
+							"logLevel": "Info",
+							"enableReliableLogging": false
+						},
+						"logLocationSettings": {
+							"linkedServiceName": {
+								"referenceName": "LS_AZ_ADLS_LOG",
+								"type": "LinkedServiceReference"
+							},
+							"path": {
+								"value": "@concat('log','/',addHours(utcNow(),9,'yyyy/MM/dd'),'/',pipeline().Pipeline)",
+								"type": "Expression"
+							}
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_SFDC_HIMAWARI",
+						"type": "DatasetReference",
+						"parameters": {
+							"Object": {
+								"value": "@pipeline().parameters.FILE_NM",
+								"type": "Expression"
+							},
+							"Client_ID": {
+								"value": "@activity('HIMAWARI_CLNT_ID').output.value",
+								"type": "Expression"
+							},
+							"SFDC_Version": {
+								"value": "@pipeline().parameters.SFDC_Version",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_KORE_ADLS",
+						"type": "DatasetReference",
+						"parameters": {
+							"Path": {
+								"value": "@concat('13636_JPN_KORE_AI/',pipeline().parameters.FILE_NM,'/Knowledge__kav_TMP/')",
+								"type": "Expression"
+							},
+							"File_Name": {
+								"value": "@concat(pipeline().parameters.FILE_NM,'.json')",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"INGSTN_ID": {
+				"type": "int",
+				"defaultValue": 9000005
+			},
+			"FILE_NM": {
+				"type": "string",
+				"defaultValue": "Knowledge__kav"
+			},
+			"Resource": {
+				"type": "string",
+				"defaultValue": "https://azjapnajevlt1331401dv001.vault.azure.net/"
+			},
+			"SFDC_Version": {
+				"type": "string",
+				"defaultValue": "63"
+			},
+			"Api_Version": {
+				"type": "string",
+				"defaultValue": "7"
+			}
+		},
+		"variables": {
+			"SFDC_Version": {
+				"type": "String",
+				"defaultValue": "63.0"
+			}
+		},
+		"folder": {
+			"name": "13636_JPN_KORE_AI/INCREMENTAL/SFDC_HIMAWARI"
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-11-19T11:27:42Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

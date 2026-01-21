@@ -1,0 +1,25 @@
+{
+	"name": "my_lakedb",
+	"properties": {
+		"Name": "my_lakedb",
+		"EntityType": "DATABASE",
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"Properties": {
+			"IsSyMSCDMDatabase": true
+		},
+		"Source": {
+			"Provider": "ADLS",
+			"Location": "abfss://contosoflavor2@anotherstorageforsynapse.dfs.core.windows.net/my_lakedb",
+			"Properties": {
+				"FormatType": "csv",
+				"LinkedServiceName": "ruicunha-contoso-flavor2-WorkspaceDefaultStorage"
+			}
+		},
+		"PublishStatus": "PUBLISHED",
+		"ObjectVersion": 9,
+		"ObjectId": "d07e3f30-060e-4294-b707-54fb641fd724"
+	},
+	"type": "DATABASE"
+}

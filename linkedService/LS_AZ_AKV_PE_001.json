@@ -1,0 +1,12 @@
+{
+	"name": "LS_AZ_AKV_PE_001",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"description": "This Linked Service connects to AKV ",
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://AZJAPNAJEVLT1331401DV001.vault.azure.net/"
+		}
+	}
+}

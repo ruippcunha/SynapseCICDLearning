@@ -1,0 +1,19 @@
+{
+	"name": "LS_AZ_SQL_DB",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"description": "This LS connects to Azure SQL DB",
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_AZ_AKV_PE_001",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "conn-str-az-commondb"
+			}
+		}
+	}
+}
