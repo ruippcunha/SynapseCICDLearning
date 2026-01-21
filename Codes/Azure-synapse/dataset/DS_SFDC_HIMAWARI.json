@@ -1,0 +1,41 @@
+{
+	"name": "DS_SFDC_HIMAWARI",
+	"properties": {
+		"description": "This Dataset connects to Salesforce C-FORCE instance.",
+		"linkedServiceName": {
+			"referenceName": "LS_SFDC_API_HIMAVARI",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"SFDC_Version": {
+					"value": "@dataset().SFDC_Version",
+					"type": "Expression"
+				},
+				"CLIENT_ID": {
+					"value": "@dataset().Client_ID",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"Object": {
+				"type": "string"
+			},
+			"Client_ID": {
+				"type": "string"
+			},
+			"SFDC_Version": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SalesforceV2Object",
+		"schema": [],
+		"typeProperties": {
+			"objectApiName": {
+				"value": "@dataset().Object",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

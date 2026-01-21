@@ -1,0 +1,9 @@
+{
+	"name": "OnPremSHIR",
+	"properties": {
+		"type": "SelfHosted",
+		"typeProperties": {
+			"selfContainedInteractiveAuthoringEnabled": false
+		}
+	}
+}

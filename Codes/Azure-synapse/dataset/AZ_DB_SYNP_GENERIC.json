@@ -1,0 +1,33 @@
+{
+	"name": "AZ_DB_SYNP_GENERIC",
+	"properties": {
+		"description": "This dataset refers to Azure Synapse DB",
+		"parameters": {
+			"TableName": {
+				"type": "string"
+			},
+			"SchemaName": {
+				"type": "String",
+				"defaultValue": "LIFE"
+			}
+		},
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().SchemaName",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().tableName",
+				"type": "Expression"
+			}
+		},
+		"sqlPool": {
+			"referenceName": "mypool",
+			"type": "SqlPoolReference"
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

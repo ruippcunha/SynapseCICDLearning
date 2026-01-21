@@ -1,0 +1,83 @@
+{
+	"name": "query_sql_od",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "mysparkpool",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "56g",
+			"driverCores": 8,
+			"executorMemory": "56g",
+			"executorCores": 8,
+			"numExecutors": 2,
+			"runAsWorkspaceSystemIdentity": true,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "4dc181e4-8316-4ef5-a6ac-2fb572aaf79a"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/0c6ee07f-0d38-4a6b-b8f8-93814aae9823/resourceGroups/rg-synapse/providers/Microsoft.Synapse/workspaces/ruicunha-contoso-flavor3/bigDataPools/mysparkpool",
+				"name": "mysparkpool",
+				"type": "Spark",
+				"endpoint": "https://ruicunha-contoso-flavor3.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/mysparkpool",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net",
+					"authHeader": null
+				},
+				"sparkVersion": "3.4",
+				"nodeCount": 3,
+				"cores": 16,
+				"memory": 112,
+				"extraHeader": null
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"# Parameters \n",
+					"sql_pool_name = \"ruicunha-contoso-flavor3-ondemand\"  # e.g., myworkspace\n",
+					"database_name = \"master\"           # e.g., mydb\n",
+					"\n",
+					"# Build the JDBC URL for managed identity\n",
+					"jdbc_url = f\"jdbc:sqlserver://{sql_pool_name}.sql.azuresynapse.net:1433;\" \\\n",
+					"           f\"database={database_name};\" \\\n",
+					"           \"encrypt=true;\" \\\n",
+					"           \"trustServerCertificate=false;\" \\\n",
+					"           \"hostNameInCertificate=*.sql.azuresynapse.net;\" \\\n",
+					"           \"authentication=ActiveDirectoryMsi\"\n",
+					"\n",
+					"# Define the query\n",
+					"query = \"SELECT * from sys.tables\"\n",
+					"\n",
+					"# Read the data using Spark\n",
+					"df = spark.read \\\n",
+					"    .format(\"jdbc\") \\\n",
+					"    .option(\"url\", jdbc_url) \\\n",
+					"    .option(\"query\", query) \\\n",
+					"    .option(\"driver\", \"com.microsoft.sqlserver.jdbc.SQLServerDriver\") \\\n",
+					"    .load()\n",
+					"\n",
+					"# Show the result\n",
+					"df.show(truncate=False)\n",
+					""
+				],
+				"execution_count": 2
+			}
+		]
+	}
+}

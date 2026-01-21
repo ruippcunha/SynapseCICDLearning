@@ -1,0 +1,10 @@
+{
+	"name": "synapse-ws-sql--ruicunha-contoso-flavor3",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/0c6ee07f-0d38-4a6b-b8f8-93814aae9823/resourceGroups/rg-synapse/providers/Microsoft.Synapse/workspaces/ruicunha-contoso-flavor3",
+		"groupId": "sql",
+		"fqdns": [
+			"ruicunha-contoso-flavor3.4527c44a-3fb3-4631-8b6a-d8b739d5fa9b.sql.azuresynapse.net"
+		]
+	}
+}

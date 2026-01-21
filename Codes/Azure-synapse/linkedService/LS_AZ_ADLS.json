@@ -1,0 +1,12 @@
+{
+	"name": "LS_AZ_ADLS",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"description": "This LS connects to Data Lake (ADLS2) storage",
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://azjapnajestr1331401dv001.dfs.core.windows.net/"
+		}
+	}
+}

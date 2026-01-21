@@ -1,0 +1,35 @@
+{
+	"name": "LS_SFDC_API_HIMAVARI",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"description": "This Linked service connects to Salesforce Himawari instance.",
+		"parameters": {
+			"SFDC_Version": {
+				"type": "string"
+			},
+			"CLIENT_ID": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SalesforceV2",
+		"typeProperties": {
+			"environmentUrl": "https://metlife-callcenter--sit.sandbox.my.salesforce.com",
+			"clientId": "@{linkedService().CLIENT_ID}",
+			"clientSecret": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_AZ_AKV_PE_001",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "client-pass-sfdc-himawari"
+			},
+			"apiVersion": "@{linkedService().SFDC_Version}",
+			"authenticationType": "OAuth2ClientCredential"
+		},
+		"connectVia": {
+			"referenceName": "OnPremSHIR",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

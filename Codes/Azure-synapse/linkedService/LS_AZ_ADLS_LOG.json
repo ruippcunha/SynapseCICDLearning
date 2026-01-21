@@ -1,0 +1,13 @@
+{
+	"name": "LS_AZ_ADLS_LOG",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"description": "This LS connects to Log container in the ADLS2 (Data Lake) storage",
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"serviceEndpoint": "https://azjapnajestr1331401dv001.blob.core.windows.net/",
+			"accountKind": "StorageV2"
+		}
+	}
+}

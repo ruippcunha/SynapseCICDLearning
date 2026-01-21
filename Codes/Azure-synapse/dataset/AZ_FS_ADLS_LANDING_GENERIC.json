@@ -1,0 +1,103 @@
+{
+	"name": "AZ_FS_ADLS_LANDING_GENERIC",
+	"properties": {
+		"description": "This Dataset refers to generic Flat File in ADLS container- landing",
+		"linkedServiceName": {
+			"referenceName": "LS_AZ_ADLS",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FolderName": {
+				"type": "string"
+			},
+			"FileName": {
+				"type": "string"
+			},
+			"columndelimiter": {
+				"type": "string",
+				"defaultValue": ","
+			},
+			"encoding": {
+				"type": "string",
+				"defaultValue": "SHIFT-JIS"
+			},
+			"escape": {
+				"type": "string",
+				"defaultValue": "\\"
+			},
+			"quotechar": {
+				"type": "string",
+				"defaultValue": "\""
+			},
+			"firstRowAsHeader": {
+				"type": "bool",
+				"defaultValue": true
+			},
+			"ContainerName": {
+				"type": "string",
+				"defaultValue": "landing"
+			},
+			"compressionType": {
+				"type": "string",
+				"defaultValue": "None"
+			},
+			"rowDelimiter": {
+				"type": "string",
+				"defaultValue": "\\r\\n"
+			},
+			"compressionLevel": {
+				"type": "string",
+				"defaultValue": "Optimal"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().FileName",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().FolderName",
+					"type": "Expression"
+				},
+				"fileSystem": {
+					"value": "@dataset().ContainerName",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": {
+				"value": "@dataset().columndelimiter",
+				"type": "Expression"
+			},
+			"compressionCodec": {
+				"value": "@dataset().compressionType",
+				"type": "Expression"
+			},
+			"compressionLevel": {
+				"value": "@dataset().compressionLevel",
+				"type": "Expression"
+			},
+			"encodingName": {
+				"value": "@dataset().encoding",
+				"type": "Expression"
+			},
+			"escapeChar": {
+				"value": "@dataset().escape",
+				"type": "Expression"
+			},
+			"firstRowAsHeader": {
+				"value": "@dataset().firstRowAsHeader",
+				"type": "Expression"
+			},
+			"quoteChar": {
+				"value": "@dataset().quotechar",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}
