@@ -1,0 +1,45 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "ruicunha-contoso-flavor3"
+		},
+		"ruicunha-contoso-flavor3-WorkspaceDefaultSqlServer_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:ruicunha-contoso-flavor3.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"LS_AML_properties_typeProperties_subscriptionId": {
+			"value": "0c6ee07f-0d38-4a6b-b8f8-93814aae9823"
+		},
+		"LS_AML_properties_typeProperties_resourceGroupName": {
+			"value": "rg-synapse"
+		},
+		"LS_AZ_ADLS_properties_typeProperties_url": {
+			"value": "https://azjapnajestr1331401dv001.dfs.core.windows.net/"
+		},
+		"LS_AZ_ADLS_LOG_properties_typeProperties_serviceEndpoint": {
+			"value": "https://azjapnajestr1331401dv001.blob.core.windows.net/"
+		},
+		"LS_AZ_AKV_PE_001_properties_typeProperties_baseUrl": {
+			"value": "https://AZJAPNAJEVLT1331401DV001.vault.azure.net/"
+		},
+		"LS_AZ_SQL_DB_properties_typeProperties_connectionString_secretName": {
+			"value": "conn-str-az-commondb"
+		},
+		"LS_SFDC_API_HIMAVARI_properties_typeProperties_environmentUrl": {
+			"value": "https://metlife-callcenter--sit.sandbox.my.salesforce.com"
+		},
+		"LS_SFDC_API_HIMAVARI_properties_typeProperties_clientId": {
+			"value": "@{linkedService().CLIENT_ID}"
+		},
+		"ruicunha-contoso-flavor3-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://stgsynapseruicunha.dfs.core.windows.net"
+		},
+		"Triggerx_properties_typeProperties_scope": {
+			"value": "/subscriptions/0c6ee07f-0d38-4a6b-b8f8-93814aae9823/resourceGroups/rg-synapse/providers/Microsoft.Storage/storageAccounts/anotherstorageforsynapse"
+		},
+		"cunhatrigger_properties_typeProperties_scope": {
+			"value": "/subscriptions/0c6ee07f-0d38-4a6b-b8f8-93814aae9823/resourceGroups/rg-synapse/providers/Microsoft.Storage/storageAccounts/anotherstorageforsynapse"
+		}
+	}
+}
