@@ -1,0 +1,1251 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"type": "string",
+			"metadata": "Workspace name",
+			"defaultValue": "ruicunha-contoso-flavor3"
+		},
+		"ruicunha-contoso-flavor3-WorkspaceDefaultSqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ruicunha-contoso-flavor3-WorkspaceDefaultSqlServer'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:ruicunha-contoso-flavor3.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"LS_AML_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "0c6ee07f-0d38-4a6b-b8f8-93814aae9823"
+		},
+		"LS_AML_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "rg-synapse"
+		},
+		"LS_AZ_ADLS_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://azjapnajestr1331401dv001.dfs.core.windows.net/"
+		},
+		"LS_AZ_ADLS_LOG_properties_typeProperties_serviceEndpoint": {
+			"type": "string",
+			"defaultValue": "https://azjapnajestr1331401dv001.blob.core.windows.net/"
+		},
+		"LS_AZ_AKV_PE_001_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://AZJAPNAJEVLT1331401DV001.vault.azure.net/"
+		},
+		"LS_AZ_SQL_DB_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "conn-str-az-commondb"
+		},
+		"LS_SFDC_API_HIMAVARI_properties_typeProperties_environmentUrl": {
+			"type": "string",
+			"defaultValue": "https://metlife-callcenter--sit.sandbox.my.salesforce.com"
+		},
+		"LS_SFDC_API_HIMAVARI_properties_typeProperties_clientId": {
+			"type": "string",
+			"defaultValue": "@{linkedService().CLIENT_ID}"
+		},
+		"ruicunha-contoso-flavor3-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgsynapseruicunha.dfs.core.windows.net"
+		},
+		"Triggerx_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/0c6ee07f-0d38-4a6b-b8f8-93814aae9823/resourceGroups/rg-synapse/providers/Microsoft.Storage/storageAccounts/anotherstorageforsynapse"
+		},
+		"cunhatrigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/0c6ee07f-0d38-4a6b-b8f8-93814aae9823/resourceGroups/rg-synapse/providers/Microsoft.Storage/storageAccounts/anotherstorageforsynapse"
+		}
+	},
+	"variables": {
+		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('workspaceName'), '/mysparkpool')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PL_SFDC_KNOWLEDGE_KAV_INCR_0002')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"description": "This pipeline ingests data from SFDC API to Landing of ADLS.",
+				"activities": [
+					{
+						"name": "CPY SFDC API ADLS",
+						"description": "This activity copies INCR load table data from SFDC API to ADLS Landing zone in the provided Target path.",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "HIMAWARI_CLNT_ID",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "2.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "@{pipeline().parameters.FILE_NM}"
+							},
+							{
+								"name": "Destination",
+								"value": "landing/@{concat('13636_JPN_KORE_AI/',pipeline().parameters.FILE_NM,'/Knowledge__kav_TMP/')}/@{concat(pipeline().parameters.FILE_NM,'.json')}"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "SalesforceV2Source",
+								"query": {
+									"value": "SELECT ArticleNumber,VersionNumber,UrlName,Title,Summary,ArticleType_Summary_Answer__c,KnowledgeArticleId FROM @{pipeline().parameters.FILE_NM}",
+									"type": "Expression"
+								},
+								"includeDeletedObjects": false
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings",
+									"filePattern": "setOfObjects"
+								}
+							},
+							"enableStaging": false,
+							"logSettings": {
+								"enableCopyActivityLog": true,
+								"copyActivityLogSettings": {
+									"logLevel": "Info",
+									"enableReliableLogging": false
+								},
+								"logLocationSettings": {
+									"linkedServiceName": {
+										"referenceName": "LS_AZ_ADLS_LOG",
+										"type": "LinkedServiceReference"
+									},
+									"path": {
+										"value": "@concat('log','/',addHours(utcNow(),9,'yyyy/MM/dd'),'/',pipeline().Pipeline)",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_SFDC_HIMAWARI",
+								"type": "DatasetReference",
+								"parameters": {
+									"Object": {
+										"value": "@pipeline().parameters.FILE_NM",
+										"type": "Expression"
+									},
+									"Client_ID": {
+										"value": "@activity('HIMAWARI_CLNT_ID').output.value",
+										"type": "Expression"
+									},
+									"SFDC_Version": {
+										"value": "@variables('SFDC_Version')",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_KORE_ADLS",
+								"type": "DatasetReference",
+								"parameters": {
+									"Path": {
+										"value": "@concat('13636_JPN_KORE_AI/',pipeline().parameters.FILE_NM,'/Knowledge__kav_TMP/')",
+										"type": "Expression"
+									},
+									"File_Name": {
+										"value": "@concat(pipeline().parameters.FILE_NM,'.json')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "HIMAWARI_CLNT_ID",
+						"description": "This activity fetches client ID details from AKV.",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@concat(pipeline().parameters.Resource,'/secrets/client-key-sfdc-himawari?api-version=',pipeline().parameters.Api_Version)",
+								"type": "Expression"
+							},
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": {
+									"value": "@pipeline().parameters.Resource",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "CPY SFDC API ADLS_copy1",
+						"description": "This activity copies INCR load table data from SFDC API to ADLS Landing zone in the provided Target path.",
+						"type": "Copy",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "2.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "@{pipeline().parameters.FILE_NM}"
+							},
+							{
+								"name": "Destination",
+								"value": "landing/@{concat('13636_JPN_KORE_AI/',pipeline().parameters.FILE_NM,'/Knowledge__kav_TMP/')}/@{concat(pipeline().parameters.FILE_NM,'.json')}"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "SalesforceV2Source",
+								"query": {
+									"value": "SELECT ArticleNumber,VersionNumber,UrlName,Title,Summary,ArticleType_Summary_Answer__c,KnowledgeArticleId FROM @{pipeline().parameters.FILE_NM}",
+									"type": "Expression"
+								},
+								"includeDeletedObjects": false
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings",
+									"filePattern": "setOfObjects"
+								}
+							},
+							"enableStaging": false,
+							"logSettings": {
+								"enableCopyActivityLog": true,
+								"copyActivityLogSettings": {
+									"logLevel": "Info",
+									"enableReliableLogging": false
+								},
+								"logLocationSettings": {
+									"linkedServiceName": {
+										"referenceName": "LS_AZ_ADLS_LOG",
+										"type": "LinkedServiceReference"
+									},
+									"path": {
+										"value": "@concat('log','/',addHours(utcNow(),9,'yyyy/MM/dd'),'/',pipeline().Pipeline)",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_SFDC_HIMAWARI",
+								"type": "DatasetReference",
+								"parameters": {
+									"Object": {
+										"value": "@pipeline().parameters.FILE_NM",
+										"type": "Expression"
+									},
+									"Client_ID": {
+										"value": "@activity('HIMAWARI_CLNT_ID').output.value",
+										"type": "Expression"
+									},
+									"SFDC_Version": {
+										"value": "@pipeline().parameters.SFDC_Version",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_KORE_ADLS",
+								"type": "DatasetReference",
+								"parameters": {
+									"Path": {
+										"value": "@concat('13636_JPN_KORE_AI/',pipeline().parameters.FILE_NM,'/Knowledge__kav_TMP/')",
+										"type": "Expression"
+									},
+									"File_Name": {
+										"value": "@concat(pipeline().parameters.FILE_NM,'.json')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"INGSTN_ID": {
+						"type": "int",
+						"defaultValue": 9000005
+					},
+					"FILE_NM": {
+						"type": "string",
+						"defaultValue": "Knowledge__kav"
+					},
+					"Resource": {
+						"type": "string",
+						"defaultValue": "https://azjapnajevlt1331401dv001.vault.azure.net/"
+					},
+					"SFDC_Version": {
+						"type": "string",
+						"defaultValue": "63"
+					},
+					"Api_Version": {
+						"type": "string",
+						"defaultValue": "7"
+					}
+				},
+				"variables": {
+					"SFDC_Version": {
+						"type": "String",
+						"defaultValue": "63.0"
+					}
+				},
+				"folder": {
+					"name": "13636_JPN_KORE_AI/INCREMENTAL/SFDC_HIMAWARI"
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-11-19T11:27:42Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DS_SFDC_HIMAWARI')]",
+				"[concat(variables('workspaceId'), '/datasets/DS_KORE_ADLS')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
+				"[concat(variables('workspaceId'), '/linkedServices/LS_AZ_ADLS_LOG')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AZ_DB_SYNP_GENERIC')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"description": "This dataset refers to Azure Synapse DB",
+				"parameters": {
+					"TableName": {
+						"type": "string"
+					},
+					"SchemaName": {
+						"type": "String",
+						"defaultValue": "LIFE"
+					}
+				},
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().SchemaName",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().tableName",
+						"type": "Expression"
+					}
+				},
+				"sqlPool": {
+					"referenceName": "mypool",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/mypool')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AZ_FS_ADLS_LANDING_GENERIC')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"description": "This Dataset refers to generic Flat File in ADLS container- landing",
+				"linkedServiceName": {
+					"referenceName": "LS_AZ_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FolderName": {
+						"type": "string"
+					},
+					"FileName": {
+						"type": "string"
+					},
+					"columndelimiter": {
+						"type": "string",
+						"defaultValue": ","
+					},
+					"encoding": {
+						"type": "string",
+						"defaultValue": "SHIFT-JIS"
+					},
+					"escape": {
+						"type": "string",
+						"defaultValue": "\\"
+					},
+					"quotechar": {
+						"type": "string",
+						"defaultValue": "\""
+					},
+					"firstRowAsHeader": {
+						"type": "bool",
+						"defaultValue": true
+					},
+					"ContainerName": {
+						"type": "string",
+						"defaultValue": "landing"
+					},
+					"compressionType": {
+						"type": "string",
+						"defaultValue": "None"
+					},
+					"rowDelimiter": {
+						"type": "string",
+						"defaultValue": "\\r\\n"
+					},
+					"compressionLevel": {
+						"type": "string",
+						"defaultValue": "Optimal"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().FileName",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().FolderName",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().ContainerName",
+							"type": "Expression"
+						}
+					},
+					"columnDelimiter": {
+						"value": "@dataset().columndelimiter",
+						"type": "Expression"
+					},
+					"compressionCodec": {
+						"value": "@dataset().compressionType",
+						"type": "Expression"
+					},
+					"compressionLevel": {
+						"value": "@dataset().compressionLevel",
+						"type": "Expression"
+					},
+					"encodingName": {
+						"value": "@dataset().encoding",
+						"type": "Expression"
+					},
+					"escapeChar": {
+						"value": "@dataset().escape",
+						"type": "Expression"
+					},
+					"firstRowAsHeader": {
+						"value": "@dataset().firstRowAsHeader",
+						"type": "Expression"
+					},
+					"quoteChar": {
+						"value": "@dataset().quotechar",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/LS_AZ_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DS_KORE_ADLS')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_AZ_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Path": {
+						"type": "string"
+					},
+					"File_Name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().File_Name",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().Path",
+							"type": "Expression"
+						},
+						"fileSystem": "landing"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/LS_AZ_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DS_SFDC_HIMAWARI')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"description": "This Dataset connects to Salesforce C-FORCE instance.",
+				"linkedServiceName": {
+					"referenceName": "LS_SFDC_API_HIMAVARI",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"SFDC_Version": {
+							"value": "@dataset().SFDC_Version",
+							"type": "Expression"
+						},
+						"CLIENT_ID": {
+							"value": "@dataset().Client_ID",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"Object": {
+						"type": "string"
+					},
+					"Client_ID": {
+						"type": "string"
+					},
+					"SFDC_Version": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "SalesforceV2Object",
+				"schema": [],
+				"typeProperties": {
+					"objectApiName": {
+						"value": "@dataset().Object",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/LS_SFDC_API_HIMAVARI')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/LS_AML')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureMLService",
+				"typeProperties": {
+					"subscriptionId": "[parameters('LS_AML_properties_typeProperties_subscriptionId')]",
+					"resourceGroupName": "[parameters('LS_AML_properties_typeProperties_resourceGroupName')]",
+					"mlWorkspaceName": "myAMLworkspace",
+					"authentication": "MSI"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/LS_AZ_ADLS')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"description": "This LS connects to Data Lake (ADLS2) storage",
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('LS_AZ_ADLS_properties_typeProperties_url')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/LS_AZ_ADLS_LOG')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"description": "This LS connects to Log container in the ADLS2 (Data Lake) storage",
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"serviceEndpoint": "[parameters('LS_AZ_ADLS_LOG_properties_typeProperties_serviceEndpoint')]",
+					"accountKind": "StorageV2"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/LS_AZ_AKV_PE_001')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"description": "This Linked Service connects to AKV ",
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('LS_AZ_AKV_PE_001_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/LS_AZ_SQL_DB')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"description": "This LS connects to Azure SQL DB",
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LS_AZ_AKV_PE_001",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "[parameters('LS_AZ_SQL_DB_properties_typeProperties_connectionString_secretName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/LS_AZ_AKV_PE_001')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/LS_SFDC_API_HIMAVARI')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"description": "This Linked service connects to Salesforce Himawari instance.",
+				"parameters": {
+					"SFDC_Version": {
+						"type": "string"
+					},
+					"CLIENT_ID": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "SalesforceV2",
+				"typeProperties": {
+					"environmentUrl": "[parameters('LS_SFDC_API_HIMAVARI_properties_typeProperties_environmentUrl')]",
+					"clientId": "[parameters('LS_SFDC_API_HIMAVARI_properties_typeProperties_clientId')]",
+					"clientSecret": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LS_AZ_AKV_PE_001",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "client-pass-sfdc-himawari"
+					},
+					"apiVersion": "@{linkedService().SFDC_Version}",
+					"authenticationType": "OAuth2ClientCredential"
+				},
+				"connectVia": {
+					"referenceName": "OnPremSHIR",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/OnPremSHIR')]",
+				"[concat(variables('workspaceId'), '/linkedServices/LS_AZ_AKV_PE_001')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/ruicunha-contoso-flavor3-WorkspaceDefaultSqlServer')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"parameters": {
+					"DBName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('ruicunha-contoso-flavor3-WorkspaceDefaultSqlServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/ruicunha-contoso-flavor3-WorkspaceDefaultStorage')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ruicunha-contoso-flavor3-WorkspaceDefaultStorage_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Triggerx')]",
+			"type": "Microsoft.Synapse/workspaces/triggers",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/dacpaclogs/blobs/",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('Triggerx_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/cunhatrigger')]",
+			"type": "Microsoft.Synapse/workspaces/triggers",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"description": "test",
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/mycontainer/blobs/",
+					"blobPathEndsWith": ".csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('cunhatrigger_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0,
+							"cleanup": true
+						},
+						"pipelineExternalComputeScaleProperties": {
+							"timeToLive": 60
+						}
+					}
+				},
+				"managedVirtualNetwork": {
+					"type": "ManagedVirtualNetworkReference",
+					"referenceName": "default"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AzureIRLocalRegion')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 10,
+							"cleanup": false,
+							"customProperties": []
+						},
+						"pipelineExternalComputeScaleProperties": {
+							"timeToLive": 60,
+							"numberOfPipelineNodes": 1,
+							"numberOfExternalNodes": 1
+						}
+					}
+				},
+				"managedVirtualNetwork": {
+					"type": "ManagedVirtualNetworkReference",
+					"referenceName": "default"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/OnPremSHIR')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {
+					"selfContainedInteractiveAuthoringEnabled": false
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/WorkspaceSystemIdentity')]",
+			"type": "Microsoft.Synapse/workspaces/credentials",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "ManagedIdentity",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/default')]",
+			"type": "Microsoft.Synapse/workspaces/managedVirtualNetworks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/query_sql_od')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "mysparkpool",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "56g",
+					"driverCores": 8,
+					"executorMemory": "56g",
+					"executorCores": 8,
+					"numExecutors": 2,
+					"runAsWorkspaceSystemIdentity": true,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "4dc181e4-8316-4ef5-a6ac-2fb572aaf79a"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/0c6ee07f-0d38-4a6b-b8f8-93814aae9823/resourceGroups/rg-synapse/providers/Microsoft.Synapse/workspaces/ruicunha-contoso-flavor3/bigDataPools/mysparkpool",
+						"name": "mysparkpool",
+						"type": "Spark",
+						"endpoint": "https://ruicunha-contoso-flavor3.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/mysparkpool",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net",
+							"authHeader": null
+						},
+						"sparkVersion": "3.4",
+						"nodeCount": 3,
+						"cores": 16,
+						"memory": 112,
+						"extraHeader": null
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"source": [
+							"# Parameters \n",
+							"sql_pool_name = \"ruicunha-contoso-flavor3-ondemand\"  # e.g., myworkspace\n",
+							"database_name = \"master\"           # e.g., mydb\n",
+							"\n",
+							"# Build the JDBC URL for managed identity\n",
+							"jdbc_url = f\"jdbc:sqlserver://{sql_pool_name}.sql.azuresynapse.net:1433;\" \\\n",
+							"           f\"database={database_name};\" \\\n",
+							"           \"encrypt=true;\" \\\n",
+							"           \"trustServerCertificate=false;\" \\\n",
+							"           \"hostNameInCertificate=*.sql.azuresynapse.net;\" \\\n",
+							"           \"authentication=ActiveDirectoryMsi\"\n",
+							"\n",
+							"# Define the query\n",
+							"query = \"SELECT * from sys.tables\"\n",
+							"\n",
+							"# Read the data using Spark\n",
+							"df = spark.read \\\n",
+							"    .format(\"jdbc\") \\\n",
+							"    .option(\"url\", jdbc_url) \\\n",
+							"    .option(\"query\", query) \\\n",
+							"    .option(\"driver\", \"com.microsoft.sqlserver.jdbc.SQLServerDriver\") \\\n",
+							"    .load()\n",
+							"\n",
+							"# Show the result\n",
+							"df.show(truncate=False)\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 2
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/query_sql_od_silas')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"metadata": {},
+				"cells": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/test connection to postgres')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"metadata": {},
+				"cells": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/mysparkconfig')]",
+			"type": "Microsoft.Synapse/workspaces/sparkConfigurations",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"configs": {
+					"spark.acls.enable": "true",
+					"spark.authenticate": "true"
+				},
+				"created": "2025-05-14T21:15:59.209Z",
+				"createdBy": "admin@MngEnvMCAP544797.onmicrosoft.com",
+				"annotations": [],
+				"configMergeRule": {
+					"artifact.currentOperation.spark.acls.enable": "replace",
+					"artifact.currentOperation.spark.authenticate": "replace"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/my_lakedb')]",
+			"type": "Microsoft.Synapse/workspaces/databases",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"Ddls": [
+					{
+						"ActionType": "CREATE",
+						"OldEntity": null,
+						"NewEntity": {
+							"Name": "my_lakedb",
+							"EntityType": "DATABASE",
+							"Origin": {
+								"Type": "SPARK"
+							},
+							"Properties": {
+								"IsSyMSCDMDatabase": true
+							},
+							"Source": {
+								"Provider": "ADLS",
+								"Location": "abfss://contosoflavor2@anotherstorageforsynapse.dfs.core.windows.net/my_lakedb",
+								"Properties": {
+									"FormatType": "csv",
+									"LinkedServiceName": "ruicunha-contoso-flavor2-WorkspaceDefaultStorage"
+								}
+							},
+							"PublishStatus": "PUBLISHED",
+							"ObjectVersion": 9,
+							"ObjectId": "d07e3f30-060e-4294-b707-54fb641fd724"
+						},
+						"Source": {
+							"Type": "SPARK"
+						}
+					},
+					{
+						"ActionType": "CREATE",
+						"OldEntity": null,
+						"NewEntity": {
+							"Name": "Table_1",
+							"EntityType": "TABLE",
+							"TableType": "EXTERNAL",
+							"Namespace": {
+								"SchemaName": null,
+								"DatabaseName": "my_lakedb",
+								"DatabaseId": null
+							},
+							"StorageDescriptor": {
+								"Distribution": null,
+								"Columns": [
+									{
+										"Name": "Column_1",
+										"Description": null,
+										"OriginDataTypeName": {
+											"TypeName": "string",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 256,
+											"Precision": 0,
+											"Scale": 0,
+											"Properties": {
+												"HIVE_TYPE_STRING": "string"
+											}
+										}
+									}
+								],
+								"ColumnSetEntityName": "674527d5-aa33-4d0e-95d8-1ce6b93db6fa",
+								"Format": {
+									"InputFormat": "org.apache.hadoop.mapred.SequenceFileInputFormat",
+									"OutputFormat": "org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat",
+									"FormatType": "csv",
+									"SerializeLib": "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe",
+									"Properties": {
+										"path": "abfss://contosoflavor2@anotherstorageforsynapse.dfs.core.windows.net/my_lakedb/Table_1",
+										"delimiter": ",",
+										"firstRowAsHeader": "false",
+										"multiLine": "false",
+										"serialization.format": "1",
+										"escape": "\\",
+										"quote": "\"",
+										"FormatTypeSetToDatabaseDefault": true,
+										"header": "false"
+									}
+								},
+								"Source": {
+									"Provider": "ADLS",
+									"Location": "abfss://contosoflavor2@anotherstorageforsynapse.dfs.core.windows.net/my_lakedb/Table_1",
+									"Properties": {
+										"LinkedServiceName": "ruicunha-contoso-flavor2-WorkspaceDefaultStorage",
+										"LocationSetToDatabaseDefault": true
+									}
+								},
+								"Properties": {
+									"textinputformat.record.delimiter": ",",
+									"compression": "{\"type\":\"None\",\"level\":\"optimal\"}",
+									"derivedModelAttributeInfo": "{\"attributeReferences\":{}}"
+								},
+								"Compressed": false,
+								"SerDeInfo": null,
+								"IsStoredAsSubdirectories": false
+							},
+							"Owner": null,
+							"CreateTime": 0,
+							"LastAccessTime": 0,
+							"Retention": 0,
+							"Temporary": false,
+							"IsRewriteEnabled": false,
+							"ViewOriginalText": null,
+							"ViewExpandedText": null,
+							"Origin": {
+								"Type": "SPARK"
+							},
+							"OriginObjectId": null,
+							"IsSharedEntity": false,
+							"PublishStatus": "PUBLISHED",
+							"Properties": {
+								"Description": "",
+								"DisplayFolderInfo": "{\"name\":\"Others\",\"colorCode\":\"\"}",
+								"PrimaryKeys": "",
+								"EXTERNAL": "TRUE",
+								"spark.sql.sources.provider": "csv",
+								"spark.sql.sources.schema.numParts": "1",
+								"spark.sql.sources.schema.part.0": "{\"type\":\"struct\",\"fields\":[{\"name\":\"Column_1\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}}]}"
+							},
+							"ObjectVersion": 9,
+							"ObjectId": "dbefb8c8-aeb7-4cd4-811b-a51d708ea6ac",
+							"Description": ""
+						},
+						"Source": {
+							"Type": "SPARK"
+						}
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/mysparkpool')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"autoPause": {
+					"enabled": true,
+					"delayInMinutes": 5
+				},
+				"autoScale": {
+					"enabled": true,
+					"maxNodeCount": 11,
+					"minNodeCount": 3
+				},
+				"nodeCount": 3,
+				"nodeSize": "Large",
+				"nodeSizeFamily": "MemoryOptimized",
+				"sparkVersion": "3.4",
+				"isComputeIsolationEnabled": false,
+				"sessionLevelPackagesEnabled": false,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "northeurope"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/mypool')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "northeurope"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/default/MPE_PostgresSQL_New')]",
+			"type": "Microsoft.Synapse/workspaces/managedVirtualNetworks/managedPrivateEndpoints",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"privateLinkResourceId": "/subscriptions/0c6ee07f-0d38-4a6b-b8f8-93814aae9823/resourceGroups/rg-synapse/providers/Microsoft.DBforPostgreSQL/flexibleServers/cunhapostgres",
+				"groupId": "postgresqlServer",
+				"fqdns": [
+					"cunhapostgres.postgres.database.azure.com"
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/default/synapse-ws-custstgacct--ruicunha-contoso-flavor3-stgsynapseruicunha')]",
+			"type": "Microsoft.Synapse/workspaces/managedVirtualNetworks/managedPrivateEndpoints",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"privateLinkResourceId": "/subscriptions/0c6ee07f-0d38-4a6b-b8f8-93814aae9823/resourceGroups/rg-synapse/providers/Microsoft.Storage/storageAccounts/stgsynapseruicunha",
+				"groupId": "dfs",
+				"fqdns": [
+					"stgsynapseruicunha.dfs.core.windows.net"
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/default/synapse-ws-sql--ruicunha-contoso-flavor3')]",
+			"type": "Microsoft.Synapse/workspaces/managedVirtualNetworks/managedPrivateEndpoints",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"privateLinkResourceId": "/subscriptions/0c6ee07f-0d38-4a6b-b8f8-93814aae9823/resourceGroups/rg-synapse/providers/Microsoft.Synapse/workspaces/ruicunha-contoso-flavor3",
+				"groupId": "sql",
+				"fqdns": [
+					"ruicunha-contoso-flavor3.4527c44a-3fb3-4631-8b6a-d8b739d5fa9b.sql.azuresynapse.net"
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/default/synapse-ws-sqlOnDemand--ruicunha-contoso-flavor3')]",
+			"type": "Microsoft.Synapse/workspaces/managedVirtualNetworks/managedPrivateEndpoints",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"privateLinkResourceId": "/subscriptions/0c6ee07f-0d38-4a6b-b8f8-93814aae9823/resourceGroups/rg-synapse/providers/Microsoft.Synapse/workspaces/ruicunha-contoso-flavor3",
+				"groupId": "sqlOnDemand",
+				"fqdns": [
+					"ruicunha-contoso-flavor3-ondemand.4527c44a-3fb3-4631-8b6a-d8b739d5fa9b.sql.azuresynapse.net"
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/managedVirtualNetworks/default')]"
+			]
+		}
+	]
+}
