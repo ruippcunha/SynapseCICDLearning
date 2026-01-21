@@ -18,15 +18,16 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "5c292126-4613-423b-9711-b6f5fb74e3c7"
+				"spark.autotune.trackingId": "f18665a4-0bbd-4710-928d-e85c5c57b67f"
 			}
 		},
 		"metadata": {
 			"saveOutput": true,
-			"synapse_widget": {
-				"version": "0.1"
-			},
 			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
 			"language_info": {
 				"name": "python"
 			},
@@ -37,14 +38,13 @@
 				"endpoint": "https://ruicunha-contoso-flavor3.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/mysparkpool",
 				"auth": {
 					"type": "AAD",
-					"authResource": "https://dev.azuresynapse.net",
-					"authHeader": null
+					"authResource": "https://dev.azuresynapse.net"
 				},
 				"sparkVersion": "3.4",
 				"nodeCount": 3,
 				"cores": 16,
 				"memory": 112,
-				"extraHeader": null
+				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -52,7 +52,7 @@
 			{
 				"cell_type": "code",
 				"source": [
-					"# Parameters\n",
+					"# Parameters \n",
 					"sql_pool_name = \"ruicunha-contoso-flavor3-ondemand\"  # e.g., myworkspace\n",
 					"database_name = \"master\"           # e.g., mydb\n",
 					"\n",
