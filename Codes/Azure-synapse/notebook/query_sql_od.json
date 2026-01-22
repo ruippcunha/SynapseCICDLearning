@@ -18,7 +18,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "d2e1388b-b132-4946-b208-3c5f0920f913"
+				"spark.autotune.trackingId": "c9ee5f2d-dcae-455e-a762-f78be48f7ebe"
 			}
 		},
 		"metadata": {
@@ -52,7 +52,7 @@
 			{
 				"cell_type": "code",
 				"source": [
-					"# Parameters\n",
+					"# Parameters \n",
 					"sql_pool_name = \"ruicunha-contoso-flavor3-ondemand\"  # e.g., myworkspace\n",
 					"database_name = \"master\"           # e.g., mydb \n",
 					"\n",
