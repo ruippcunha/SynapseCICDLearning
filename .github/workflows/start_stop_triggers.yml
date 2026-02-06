@@ -79,6 +79,9 @@ jobs:
                         echo "Starting trigger $name"
                         
                           try {
+                              #if you want to select only specific triggers to start, add your logic here
+                              #or modify the $triggerlist object to include only the necessary triggers
+                              
                               #if ($name -like "newtrigger*" -and $SynapseWorkspaceName -like "swift-demo") {
                                 Start-AzSynapseTrigger -WorkspaceName $SynapseWorkspaceName -Name $name -PassThru
                                 echo "Trigger $name started"
