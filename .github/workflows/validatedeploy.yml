@@ -30,9 +30,10 @@ jobs:
           node-version: 16.x
       - name: Display Node.js version
         run: node -v
+
       
       - name: Synapse workspace deployment
-        uses: Azure/Synapse-workspace-deployment@V1.8.0
+        uses: Azure/Synapse-workspace-deployment@users/ag/node24-upgrade
         with:
             # Provide the Synapse workspace name where you want to deploy the artifacts.
             TargetWorkspaceName: 'syn-caserepro-dev'
